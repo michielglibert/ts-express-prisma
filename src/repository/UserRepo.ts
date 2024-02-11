@@ -1,20 +1,60 @@
 import { PrismaClient } from "@prisma/client";
-import { User } from ".prisma/client";
+import { User, Prisma } from ".prisma/client";
+import { IRead } from "@src/interfaces/IRead";
+import { IWrite } from "@src/interfaces/IWrite";
 
-const prisma = new PrismaClient();
+const userPayload = Prisma.validator<Prisma.UserDefaultArgs>()({
+  select: { name: true },
+});
 
-async function getAll(): Promise<User[]> {
-  const users = await prisma.user.findMany();
-  return users;
+export type UserPayload = Prisma.UserGetPayload<typeof userPayload>;
+
+class UserRepository implements IRead<User>, IWrite<UserPayload, User> {
+  private readonly prisma;
+
+  constructor() {
+    this.prisma = new PrismaClient();
+  }
+
+  async getAll(): Promise<User[]> {
+    const users = await this.prisma.user.findMany();
+    return users;
+  }
+
+  async getOne(id: string): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+    return user;
+  }
+
+  async create(item: UserPayload): Promise<User> {
+    const user = await this.prisma.user.create({
+      data: item,
+    });
+    return user;
+  }
+
+  async update(id: string, item: UserPayload): Promise<User> {
+    const user = await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: item,
+    });
+    return user;
+  }
+
+  async remove(id: string): Promise<User> {
+    const user = await this.prisma.user.delete({
+      where: {
+        id,
+      },
+    });
+    return user;
+  }
 }
 
-async function createUser(username: string): Promise<User> {
-  const user = await prisma.user.create({
-    data: {
-      name: username,
-    },
-  });
-  return user;
-}
-
-export default { getAll, createUser };
+export default UserRepository;
