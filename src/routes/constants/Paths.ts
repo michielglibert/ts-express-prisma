@@ -2,8 +2,11 @@ const Paths = {
   Base: "/api",
   User: {
     Base: "/users",
-    Get: "/",
-    Add: "/",
+    GetOne: "/:id",
+    GetAll: "/",
+    Post: "/",
+    Put: "/:id",
+    Delete: "/:id",
   },
 };
 
