@@ -1,12 +1,32 @@
-import UserRepo from "@src/repository/UserRepo";
-import { User } from ".prisma/client";
+import { User, Prisma } from ".prisma/client";
+import UserRepository, { UserPayload } from "@src/repository/UserRepo";
 
-const getAll = (): Promise<User[]> => {
-  return UserRepo.getAll();
-};
+class UserService {
+  private readonly userRepository: UserRepository;
 
-const createUser = (username: string): Promise<User> => {
-  return UserRepo.createUser(username);
-};
+  constructor() {
+    this.userRepository = new UserRepository();
+  }
 
-export default { getAll, createUser };
+  getOne = (id: string) => {
+    return this.userRepository.getOne(id);
+  };
+
+  getAll = () => {
+    return this.userRepository.getAll();
+  };
+
+  create = (user: UserPayload) => {
+    return this.userRepository.create(user);
+  };
+
+  update = (id: string, user: UserPayload) => {
+    return this.userRepository.update(id, user);
+  };
+
+  remove = (id: string) => {
+    return this.userRepository.remove(id);
+  };
+}
+
+export default UserService;
