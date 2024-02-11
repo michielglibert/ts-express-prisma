@@ -1,6 +1,6 @@
 import { Router } from "express";
 import Paths from "./constants/Paths";
-import UserRouter from "./user/UserRoutes";
+import UserRouter from "./UserRouter";
 
 const apiRouter = Router();
 
